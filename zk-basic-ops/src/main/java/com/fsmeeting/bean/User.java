@@ -1,4 +1,4 @@
-package com.fsmeeting.zkclient.baisc.ops;
+package com.fsmeeting.bean;
 
 import java.io.Serializable;
 

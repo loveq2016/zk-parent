@@ -1,8 +1,8 @@
 package com.fsmeeting.zkclient.baisc.ops;
 
+import com.fsmeeting.bean.User;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.serialize.SerializableSerializer;
-import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
 public class GetData {
