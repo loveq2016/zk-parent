@@ -1,8 +1,8 @@
-package com.fsmeeting.curator.basic.ops.mastersel;
+package com.fsmeeting.curator.mastersel;
 
 /**
  * 触发一下mainstem发生切换
- * 
+ *
  * @author jianghang 2012-9-11 下午02:26:03
  * @version 1.0.0
  */
