@@ -1,12 +1,10 @@
 package com.fsmeeting.zkclient.lock;
 
-import java.util.concurrent.Callable;
-
-import org.I0Itec.zkclient.IZkConnection;
 import org.I0Itec.zkclient.ZkClient;
-import org.I0Itec.zkclient.ZkConnection;
 import org.I0Itec.zkclient.serialize.ZkSerializer;
 import org.apache.zookeeper.data.Stat;
+
+import java.util.concurrent.Callable;
 
 public class ZkClientExt extends ZkClient {
 
@@ -18,13 +16,13 @@ public class ZkClientExt extends ZkClient {
     public void watchForData(final String path) {
         retryUntilConnected(new Callable<Object>() {
 
-			public Object call() throws Exception {
-				Stat stat = new Stat(); 
+            public Object call() throws Exception {
+                Stat stat = new Stat();
                 _connection.readData(path, stat, true);
                 return null;
-			}
+            }
 
         });
-    }   
-    
+    }
+
 }

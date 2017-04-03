@@ -11,6 +11,7 @@ import org.apache.zookeeper.CreateMode;
  * @Author:yicai.liu<虚竹子>
  * @Date 2017/3/30 15:16
  */
+
 public class CreateNode {
 
     public static void main(String[] args) throws Exception {
@@ -29,8 +30,6 @@ public class CreateNode {
         System.out.println(path);
 
         Thread.sleep(Integer.MAX_VALUE);
-
-
     }
 
 }

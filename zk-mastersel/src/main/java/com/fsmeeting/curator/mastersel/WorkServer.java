@@ -18,6 +18,7 @@
  */
 package com.fsmeeting.curator.mastersel;
 
+import com.fsmeeting.bean.ServerMessage;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.leader.LeaderSelector;
 import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter;
@@ -29,61 +30,82 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * An example leader selector client. Note that {@link LeaderSelectorListenerAdapter} which
- * has the recommended handling for connection state issues
+ * Description: leader 选举,{@link LeaderSelectorListenerAdapter}：处理连接状态问题
+ *
+ * @Author:yicai.liu<虚竹子>
  */
 public class WorkServer extends LeaderSelectorListenerAdapter implements Closeable {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkServer.class);
-    private final String name;
+
+    /**
+     * 服务器
+     */
+    private ServerMessage serverMessage;
+
+    /**
+     * 选主器
+     */
     private final LeaderSelector leaderSelector;
-    private RunningListener listener;
 
-    public RunningListener getListener() {
-        return listener;
-    }
+    /**
+     * 监听器
+     */
+    private IRunningListener listener;
 
-    public void setListener(RunningListener listener) {
-        this.listener = listener;
-    }
-
-    public WorkServer(CuratorFramework client, String path, String name) {
-        this.name = name;
-
-        // create a leader selector using the given path for management
-        // all participants in a given leader selection must use the same path
-        // ExampleClient here is also a LeaderSelectorListener but this isn't required
+    /**
+     * 初始化
+     *
+     * @param client
+     * @param path
+     * @param serverMessage
+     */
+    public WorkServer(CuratorFramework client, String path, ServerMessage serverMessage) {
+        this.serverMessage = serverMessage;
         leaderSelector = new LeaderSelector(client, path, this);
-
-        // for most cases you will want your instance to requeue when it relinquishes leadership
-        leaderSelector.autoRequeue();
+        leaderSelector.autoRequeue();// 放弃选主的时候要自动重入队列
     }
 
+    /**
+     * 工作服务启动
+     *
+     * @throws IOException
+     */
     public void start() throws IOException {
-        // the selection for this instance doesn't start until the leader selector is started
-        // leader selection is done in the background so this call to leaderSelector.start() returns immediately
-
         leaderSelector.start();
-        processStart(this.name);
+        processStart(this.getServerMessage().getId());
     }
 
+    /**
+     * 工作服务停止
+     *
+     * @throws IOException
+     */
     public void close() throws IOException {
         leaderSelector.close();
-        processStop(this.name);
+        processStop(this.getServerMessage().getId());
     }
 
+    /**
+     * Description:
+     * 你可以在takeLeadership进行任务的分配等等，并且不要返回，如果你想要要此实例一直是leader的话可以加一个死循环。
+     * 一旦此方法执行完毕之后，就会重新选举
+     *
+     * @Author:yicai.liu<虚竹子>
+     */
+    @Override
     public void takeLeadership(CuratorFramework client) throws Exception {
 
-        processActiveEnter(this.name);
+        processActiveEnter(this.getServerMessage().getId());
 
         try {
             Thread.sleep(TimeUnit.SECONDS.toMillis(5));
         } catch (InterruptedException e) {
-            System.err.println(name + " was interrupted.");
+            logger.info(serverMessage.getName() + " was interrupted.");
             Thread.currentThread().interrupt();
         } finally {
-            //System.out.println(name + " relinquishing leadership.\n");
-            processActiveExit(this.name);
+            logger.info(serverMessage.getName() + " relinquishing leadership.\n");
+            processActiveExit(this.getServerMessage().getId());
         }
     }
 
@@ -127,5 +149,20 @@ public class WorkServer extends LeaderSelectorListenerAdapter implements Closeab
         }
     }
 
+    public IRunningListener getListener() {
+        return listener;
+    }
 
+    public void setListener(IRunningListener listener) {
+        this.listener = listener;
+    }
+
+
+    public ServerMessage getServerMessage() {
+        return serverMessage;
+    }
+
+    public void setServerMessage(ServerMessage serverMessage) {
+        this.serverMessage = serverMessage;
+    }
 }

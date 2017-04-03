@@ -31,12 +31,10 @@ public class CheckExists {
                 System.out.println(stat);
                 System.out.println(arg1.getContext());
 
-
             }
         }, "123", es).forPath("/live");
 
         Thread.sleep(Integer.MAX_VALUE);
-
 
     }
 

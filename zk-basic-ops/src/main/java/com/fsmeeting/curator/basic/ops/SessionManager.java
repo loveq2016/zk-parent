@@ -40,7 +40,7 @@ public class SessionManager {
 
 
     class SessionConstants {
-        public static final String CONNECT_STRING = "192.168.7.178:2181";
+        public static final String CONNECT_STRING = "192.168.1.11:2181";
         public static final int SESSION_TIMEOUT_MS = 5000;
         public static final int CONNECT_TIMEOUT_MS = 5000;
     }

@@ -18,10 +18,14 @@
  */
 package com.fsmeeting.curator.mastersel;
 
+import com.fsmeeting.bean.ServerMessage;
+import com.fsmeeting.bean.ServerType;
 import com.fsmeeting.curator.basic.ops.SessionManager;
 import com.google.common.collect.Lists;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.utils.CloseableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,7 +33,7 @@ import java.util.List;
 
 public class LeaderSelectorCurator {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(LeaderSelectorCurator.class);
     /**
      * 模拟N个客户端连接
      */
@@ -43,26 +47,59 @@ public class LeaderSelectorCurator {
     /**
      * 客户端列表
      */
-    private List<CuratorFramework> clients = Lists.newArrayList();//
+    private List<CuratorFramework> clients = Lists.newArrayList();
     /**
      * worker服务器列表
      */
-    private List<WorkServer> workServers = Lists.newArrayList();//
+    private List<WorkServer> workServers = Lists.newArrayList();
 
-    public List<CuratorFramework> getClients() {
-        return clients;
-    }
+    public static void main(String[] args) throws Exception {
+        LeaderSelectorCurator selector = new LeaderSelectorCurator();
 
-    public void setClients(List<CuratorFramework> clients) {
-        this.clients = clients;
-    }
+        try {
+            for (int i = 0; i < CLIENT_QTY; ++i) {
+                CuratorFramework client = SessionManager.createSession();
+                selector.getClients().add(client);
 
-    public List<WorkServer> getWorkServers() {
-        return workServers;
-    }
+                ServerMessage serverMessage = new ServerMessage();
+                serverMessage.setId(new Long(i));
+                serverMessage.setType(ServerType.PROXY.getCode());
+                serverMessage.setName("Client #" + i);
 
-    public void setWorkServers(List<WorkServer> workServers) {
-        this.workServers = workServers;
+                WorkServer workServer = new WorkServer(client, PATH, serverMessage);
+                workServer.setListener(new IRunningListener() {
+                    @Override
+                    public void processStart(Object context) {
+                        logger.info(context.toString() + "- processStart...");
+                    }
+
+                    @Override
+                    public void processStop(Object context) {
+                        logger.info(context.toString() + "- processStop...");
+                    }
+
+                    @Override
+                    public void processActiveEnter(Object context) {
+                        logger.info(context.toString() + "- processActiveEnter...");
+                    }
+
+                    @Override
+                    public void processActiveExit(Object context) {
+                        logger.info(context.toString() + "- processActiveExit...");
+                    }
+
+                });
+
+                selector.getWorkServers().add(workServer);
+                workServer.start();
+            }
+
+            logger.info("Press enter/return to quit\n");
+            new BufferedReader(new InputStreamReader(System.in)).readLine();
+        } finally {
+            logger.info("Shutting down...");
+            selector.release();
+        }
     }
 
     /**
@@ -80,45 +117,19 @@ public class LeaderSelectorCurator {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        LeaderSelectorCurator selector = new LeaderSelectorCurator();
+    public List<CuratorFramework> getClients() {
+        return clients;
+    }
 
-        try {
-            for (int i = 0; i < CLIENT_QTY; ++i) {
-                CuratorFramework client = SessionManager.createSession();
-                selector.getClients().add(client);
+    public void setClients(List<CuratorFramework> clients) {
+        this.clients = clients;
+    }
 
-                WorkServer workServer = new WorkServer(client, PATH, "Client #" + i);
-                workServer.setListener(new RunningListener() {
+    public List<WorkServer> getWorkServers() {
+        return workServers;
+    }
 
-                    public void processStop(Object context) {
-                        System.out.println(context.toString() + "processStop...");
-                    }
-
-                    public void processStart(Object context) {
-                        System.out.println(context.toString() + "processStart...");
-                    }
-
-                    public void processActiveExit(Object context) {
-                        System.out.println(context.toString() + "processActiveExit...");
-                    }
-
-                    public void processActiveEnter(Object context) {
-                        System.out.println(context.toString() + "processActiveEnter...");
-                    }
-                });
-
-                selector.getWorkServers().add(workServer);
-
-                //client.start();
-                workServer.start();
-            }
-
-            System.out.println("Press enter/return to quit\n");
-            new BufferedReader(new InputStreamReader(System.in)).readLine();
-        } finally {
-            System.out.println("Shutting down...");
-            selector.release();
-        }
+    public void setWorkServers(List<WorkServer> workServers) {
+        this.workServers = workServers;
     }
 }

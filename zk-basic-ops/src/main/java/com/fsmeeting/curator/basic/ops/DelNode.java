@@ -14,11 +14,9 @@ public class DelNode {
 
         CuratorFramework client = SessionManager.createSession();
 
-        client.delete().guaranteed().deletingChildrenIfNeeded().withVersion(-1).forPath("/jike20");
-
+        client.delete().guaranteed().deletingChildrenIfNeeded().withVersion(-1).forPath("/live");
 
         Thread.sleep(Integer.MAX_VALUE);
-
 
     }
 

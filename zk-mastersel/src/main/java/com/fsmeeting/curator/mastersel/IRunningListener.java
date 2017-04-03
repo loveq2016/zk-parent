@@ -6,7 +6,7 @@ package com.fsmeeting.curator.mastersel;
  * @author jianghang 2012-9-11 下午02:26:03
  * @version 1.0.0
  */
-public interface RunningListener {
+public interface IRunningListener {
 
     /**
      * 启动时回调做点事情
