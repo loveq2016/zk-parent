@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Discription:媒体服务器启动
- * Created by yicai.liu<虚竹子> on 2017/4/5.
+ * Description:mock media server
+ *
+ * @Author:yicai.liu<虚竹子>
+ * @Date 2017/4/7 15:13
  */
 public class MediaServerLauncher {
 
@@ -53,20 +55,20 @@ public class MediaServerLauncher {
         ZkClient client = new ZkClient(Constants.ZK.ZK_CONNECT_STRING, 5000, 5000, new SerializableSerializer());
 
         LiveService service = new LiveService();
-        service.setAppId(UUIDGenerator.generator(LiveServerType.PROXY));
+        service.setAppId(UUIDGenerator.generator(LiveServerType.MEDIA));
         service.setAddress("192.168.7.178:4532;192.168.7.178:6765;192.168.7.178:8975;");
-        service.setAppType(LiveServerType.PROXY.getCode());
+        service.setAppType(LiveServerType.MEDIA.getCode());
         service.setCurLoad(10);
         service.setLoad(1000);
-        service.setDesc("代理服务器：" + service.getAppId());
+        service.setDesc("proxy：" + service.getAppId());
 
         new MediaServerLauncher(client, service, Constants.ZK.Path.ROOT_MEDIA).start();
 
-        logger.info("敲回车键退出！\n");
+        logger.info("Press enter/return to quit\n");
         try {
             new BufferedReader(new InputStreamReader(System.in)).readLine();
         } catch (IOException e) {
-            logger.error("情不知所起，一往而深", e);
+            logger.error("rubbish", e);
         }
 
     }
@@ -94,7 +96,17 @@ public class MediaServerLauncher {
      */
     private void registerMe() {
         try {
-            zkClient.createEphemeral(rootPath + "/" + liveService.getAppId());
+            // List<ACL> acls = new ArrayList<ACL>();
+           /* try {
+                String digestMessage = DigestAuthenticationProvider.generateDigest("fsmeeting:123456");
+                logger.info("digestMessage:" + digestMessage);
+                // ACL aclDigest = new ACL(Perms.READ | Perms.WRITE | Perms.CREATE, new Id("digest", digestMessage));
+                ACL aclDigest = new ACL(Perms.ALL, new Id("digest", digestMessage));
+                acls.add(aclDigest);
+            } catch (NoSuchAlgorithmException e) {
+                logger.error("No Such Auth Algorithm", e);
+            }*/
+            zkClient.createEphemeral(rootPath + "/" + liveService.getAppId(), liveService);
         } catch (ZkNoNodeException e) {
             zkClient.createPersistent(rootPath, true);
         }

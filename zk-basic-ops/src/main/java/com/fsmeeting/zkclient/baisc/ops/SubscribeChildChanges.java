@@ -26,7 +26,7 @@ public class SubscribeChildChanges {
         ZkClient zc = new ZkClient("192.168.1.105:2181", 10000, 10000, new SerializableSerializer());
         System.out.println("conneted ok!");
 
-        zc.subscribeChildChanges("/jike20", new ZkChildListener());
+        zc.subscribeChildChanges("/live", new ZkChildListener());
         Thread.sleep(Integer.MAX_VALUE);
 
 

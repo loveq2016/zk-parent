@@ -24,25 +24,30 @@ public final class Constants {
         public static final class Path {
 
             /**
+             * 服务器根目录
+             */
+            public static final String ROOT_SERVER = "/fsmeeting/live/server";
+
+            /**
              * 代理根目录
              */
-            public static String ROOT_PROXY = "/fsmeeting/live/server/proxy";
+            public static final String ROOT_PROXY = ROOT_SERVER.concat("/proxy");
 
 
             /**
              * 直播根目录
              */
-            public static String ROOT_LIVE = "/fsmeeting/live/server/live";
+            public static final String ROOT_LIVE = ROOT_SERVER.concat("/live");
 
             /**
              * 图片根目录
              */
-            public static String ROOT_PIC = "/fsmeeting/live/server/pic";
+            public static final String ROOT_PIC = ROOT_SERVER.concat("/picture");
 
             /**
              * 媒体根目录
              */
-            public static String ROOT_MEDIA = "/fsmeeting/live/server/media";
+            public static String ROOT_MEDIA = ROOT_SERVER.concat("/media");
 
         }
     }

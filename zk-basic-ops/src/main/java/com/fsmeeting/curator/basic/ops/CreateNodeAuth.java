@@ -22,7 +22,7 @@ public class CreateNodeAuth {
         CuratorFramework client = SessionManager.createSession();
 
         ACL aclIp = new ACL(Perms.READ, new Id("ip", "192.168.1.105"));
-        ACL aclDigest = new ACL(Perms.READ | Perms.WRITE, new Id("digest", DigestAuthenticationProvider.generateDigest("jike:123456")));
+        ACL aclDigest = new ACL(Perms.READ | Perms.WRITE, new Id("digest", DigestAuthenticationProvider.generateDigest("yicai:123456")));
         ArrayList<ACL> acls = new ArrayList<ACL>();
         acls.add(aclDigest);
         acls.add(aclIp);
