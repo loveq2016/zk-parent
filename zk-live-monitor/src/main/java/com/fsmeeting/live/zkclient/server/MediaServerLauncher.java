@@ -1,4 +1,4 @@
-package com.fsmeeting.live.server;
+package com.fsmeeting.live.zkclient.server;
 
 import com.fsmeeting.live.bean.LiveService;
 import com.fsmeeting.live.common.Constants;
@@ -68,7 +68,7 @@ public class MediaServerLauncher {
         try {
             new BufferedReader(new InputStreamReader(System.in)).readLine();
         } catch (IOException e) {
-            logger.error("rubbish", e);
+            logger.error("rampage...", e);
         }
 
     }

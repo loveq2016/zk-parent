@@ -1,4 +1,4 @@
-package com.fsmeeting.live.client;
+package com.fsmeeting.live.zkclient.client;
 
 import com.alibaba.fastjson.JSON;
 import com.fsmeeting.live.bean.LiveService;
@@ -76,11 +76,9 @@ public class LiveIceServerLauncher {
             public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
                 logger.info("parent Path:" + parentPath);
 
-                //交集
-                serviceCaches.entrySet().retainAll(currentChilds);
+                serviceCaches.entrySet().retainAll(currentChilds);//交集
 
-                //差集
-                currentChilds.removeAll(serviceCaches.entrySet());
+                currentChilds.removeAll(serviceCaches.entrySet());//差集
 
                 for (String child : currentChilds) {
                     LiveService service = zkClient.readData(parentPath + "/" + child);
@@ -97,7 +95,7 @@ public class LiveIceServerLauncher {
         try {
             new BufferedReader(new InputStreamReader(System.in)).readLine();
         } catch (IOException e) {
-            logger.error("rubbish", e);
+            logger.error("rampage...", e);
         }
 
     }

@@ -9,14 +9,24 @@ package com.fsmeeting.live.common;
 public final class Constants {
 
     /**
-     * Zookeeper
+     * Zookeeper 常量集
      */
     public static final class ZK {
 
         /**
-         * zookeeper 会话连接地址
+         * 会话连接地址
          */
-        public static final String ZK_CONNECT_STRING = "192.168.7.178:2181";
+        public static final String ZK_CONNECT_STRING = "192.168.1.11:2181";
+
+        /**
+         * 会话超时时间
+         */
+        public static final int SESSION_TIMEOUT_MS = 5000;
+
+        /**
+         * 连接超时时间
+         */
+        public static final int CONNECT_TIMEOUT_MS = 5000;
 
         /**
          * 节点路径
@@ -50,7 +60,18 @@ public final class Constants {
             public static String ROOT_MEDIA = ROOT_SERVER.concat("/media");
 
         }
+
     }
 
+    /**
+     * 心跳常量集
+     */
+    public static final class Heartbeat {
 
+        /**
+         * 心跳频率
+         */
+        public static final long COMMON_RATE_MS = 5000;
+
+    }
 }
